@@ -147,7 +147,7 @@ def triple_quotes_handle_trailing(snip, quoting_style):
 		snip.rv = snip.c
 
 def get_style(snip):
-	style = snip.opt("g:ultisnips_python_style", "normal")
+	style = snip.opt("g:ultisnips_python_style", "google")
 
 	if    style == "doxygen": return DOXYGEN
 	elif  style == "sphinx": return SPHINX

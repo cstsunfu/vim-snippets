@@ -1,0 +1,199 @@
+snippet fcircle "draw a circle by tikz" w
+	\\fill[${1}] (${2}) circle [radius=${4}];
+endsnippet
+snippet fcycle "draw a circle by tikz" w
+	\\fill[${1}] (${2}) -- cycle;
+endsnippet
+snippet fellipse "draw a ellipse by tikz" w
+	\\fill[${1}] (${2}) ellipse (${3} and ${4});
+endsnippet
+snippet frectangle "draw a rectangle by tikz" w
+	\\fill[${1}] (${2}) rectangle (${4});
+endsnippet
+
+snippet farc "draw a arc" w
+	\\fill[${1}] (${2})--(${3}) arc [start angle=${4},end angle=${5}, radius=${6}];
+endsnippet
+
+snippet pinter "path intersections" w
+	\\path[name intersections={of=${1}, by={[label=${2:above}:\$${3}\$]$3}}];
+endsnippet
+snippet pedge "path edge" w
+	\\path (${1}) edge[${2}] (${3});${0}
+endsnippet
+# shade  top to bottom
+snippet stcircle "stcircle " w
+	\\shade[top color=${1}, bottom color=${2}] (${3}) circle [radius=${4}];
+endsnippet
+snippet stellipse "stellipse " w
+	\\shade[top color=${1}, bottom color=${2}] (${3}) ellipse (${4} and ${5});
+endsnippet
+snippet strectangle "strectangle" w
+	\\shade[top color=${1}, bottom color=${2}] (${3}) rectangle (${4});
+endsnippet
+snippet starc "starc" w
+	\\shade[top color=${1}, bottom color=${2}] (${3})--(${4}) arc [start angle=${5},end angle=${6}, radius=${7}];
+endsnippet
+
+# shade  left to right
+snippet slcircle "slcircle " w
+	\\shade[left color=${1}, right color=${2}] (${3}) circle [radius=${4}];
+endsnippet
+snippet slellipse "slellipse" w
+	\\shade[left color=${1}, right color=${2}] (${3}) ellipse (${4} and ${5});
+endsnippet
+snippet slrectangle "slrectangle" w
+	\\shade[left color=${1}, right color=${2}] (${3}) rectangle (${4});
+endsnippet
+snippet slarc "slarc" w
+	\\shade[left color=${1}, right color=${2}] (${3})--(${4}) arc [start angle=${5},end angle=${6}, radius=${7}];
+endsnippet
+
+# shade  inner to outer
+snippet sicircle "sicircle " w
+	\\shade[inner color=${1}, outer color=${2}] (${3}) circle [radius=${4}];
+endsnippet
+snippet siellipse "siellipse" w
+	\\shade[inner color=${1}, outer color=${2}] (${3}) ellipse (${4} and ${5});
+endsnippet
+snippet sirectangle "sirectangle" w
+	\\shade[inner color=${1}, outer color=${2}] (${3}) rectangle (${4});
+endsnippet
+snippet siarc "siarc" w
+	\\shade[inner color=${1}, outer color=${2}] (${3})--(${4}) arc [start angle=${5},end angle=${6}, radius=${7}];
+endsnippet
+
+# shade  ball
+snippet sbcircle "sbcircle " w
+	\\shade[ball color=${1}] (${3}) circle [radius=${4}];
+endsnippet
+snippet sbellipse "sbellipse" w
+	\\shade[ball color=${1}] (${3}) ellipse (${4} and ${5});
+endsnippet
+snippet sbrectangle "sbrectangle" w
+	\\shade[ball color=${1}] (${3}) rectangle (${4});
+endsnippet
+snippet sbarc "sbarc" w
+	\\shade[ball color=${1}] (${3})--(${4}) arc [start angle=${5},end angle=${6}, radius=${7}];
+endsnippet
+	
+# shade&draw  top to bottom
+snippet stcircle "stcircle " w
+	\\shadedraw[top color=${1}, bottom color=${2}, draw=${3}] (${4}) circle [radius=${5}];
+endsnippet
+snippet stellipse "stellipse " w
+	\\shadedraw[top color=${1}, bottom color=${2}, draw=${3}] (${4}) ellipse (${5} and ${6});
+endsnippet
+snippet strectangle "strectangle" w
+	\\shadedraw[top color=${1}, bottom color=${2}, draw=${3}] (${4}) rectangle (${5});
+endsnippet
+snippet starc  "starc" w
+	\\shadedraw[top color=${1}, bottom color=${2}, draw=${3}] (${4})--(${5}) arc [start angle=${6},end angle=${7}, radius=${8}];
+endsnippet
+# shade&draw  left to right                                   
+snippet slcircle "slcircle" w
+	\\shadedraw[left color=${1}, right color=${2}, draw=${3}] (${4}) circle [radius=${5}];
+endsnippet
+snippet slellipse "slellipse" w
+	\\shadedraw[left color=${1}, right color=${2}, draw=${3}] (${4}) ellipse (${5} and ${6});
+endsnippet
+snippet slrectangle "slrectangle" w
+	\\shadedraw[left color=${1}, right color=${2}, draw=${3}] (${4}) rectangle (${5});
+endsnippet
+snippet slarc "slarc" w
+	\\shadedraw[left color=${1}, right color=${2}, draw=${3}] (${4})--(${5}) arc [start angle=${6},end angle=${7}, radius=${8}];
+endsnippet
+
+# shade&draw  inner to outer
+snippet sicircle "sicircle" w
+	\\shadedraw[inner color=${1}, outer color=${2}, draw=${3}] (${4}) circle [radius=${5}];
+endsnippet
+snippet siellipse "siellips" w
+	\\shadedraw[inner color=${1}, outer color=${2}, draw=${3}] (${4}) ellipse (${5} and ${6});
+endsnippet
+snippet sirectangle "sirectangl" w
+	\\shadedraw[inner color=${1}, outer color=${2}, draw=${3}] (${4}) rectangle (${5});
+endsnippet
+snippet siarc "siarc" w
+	\\shadedraw[inner color=${1}, outer color=${2}, draw=${3}] (${4})--(${5}) arc [start angle=${6},end angle=${7}, radius=${8}];
+endsnippet
+
+# shade&draw  ball
+snippet sbcircle "sbcircle" w
+	\\shadedraw[ball color=${1}, draw=${2}] (${3}) circle [radius=${4}];
+endsnippet
+snippet sbellipse "sbellips" w
+	\\shadedraw[ball color=${1}, draw=${2}] (${3}) ellipse (${4} and ${5});
+endsnippet
+snippet sbrectangle "sbrectangl" w
+	\\shadedraw[ball color=${1}, draw=${2}] (${3}) rectangle (${4});
+endsnippet
+snippet sbarc "sbar" w
+	\\shadedraw[ball color=${1}, draw=${2}] (${3})--(${4}) arc [start angle=${5},end angle=${6}, radius=${7}];
+endsnippet
+
+# fill and draw
+snippet fdcircle "fill and draw a circle by tikz" w
+	\\filldraw[${1}] (${2}) circle [radius=${4}];
+endsnippet
+snippet fdellipse "fill and draw a ellipse by tikz" w
+	\\filldraw[${1}] (${2}) ellipse (${3} and ${4});
+endsnippet
+snippet fdrectangle "fill and draw a rectangle by tikz" w
+	\\filldraw[${1}] (${2}) rectangle (${4});
+endsnippet
+snippet fdarc "fill and draw a arc" w
+	\\filldraw[${1}] (${2})--(${3}) arc [start angle=${4},end angle=${5}, radius=${6}];
+endsnippet
+
+# clip
+snippet ccircle "draw a circle by tikz" w
+	\\clip (${2}) circle [radius=${4}];
+endsnippet
+snippet cellipse "draw a ellipse by tikz" w
+	\\clip (${2}) ellipse (${3} and ${4});
+endsnippet
+snippet crectangle "draw a rectangle by tikz" w
+	\\clip (${2}) rectangle (${4});
+endsnippet
+snippet dcircle "draw a circle by tikz" w
+	\\draw[${1}] (${2}) circle [radius=${4}];
+endsnippet
+
+# draw
+snippet dellipse "draw a ellipse by tikz" w
+	\\draw[${1}] (${2}) ellipse (${3} and ${4});
+endsnippet
+snippet darc "draw a arc" w
+	\\draw[${1}] (${2}) arc [start angle=${4},end angle=${5}, radius=${6}];
+endsnippet
+snippet node "input a node" w
+	\\node[${1}](${2}) at (${3}) \{${4}\};
+endsnippet
+snippet dgrid "draw a grid by tikz" w
+	\\draw[step=${1:.5cm},${2:gray},${3:very thin}] (${4},$4) grid (${5},$5);
+endsnippet
+snippet drectangle "draw a rectangle by tikz" w
+	\\draw[${1}] (${2}) rectangle (${4});
+endsnippet
+snippet dparabola "draw a parabola by tikz" w
+	\\draw[${1}] (${2}) parabola (${4});
+endsnippet
+snippet dline "draw a line by tikz" w
+	\\draw[${1}] (${2}) -- (${4});
+endsnippet
+snippet dnode "draw a node by tikz" w
+	\\draw (${1}) node[${2}]{${3}};
+endsnippet
+snippet ts "tikzstyle" w
+	\\tikzstyle{${1}} = [${2}]
+	${0}
+endsnippet
+snippet cd "coordinate" w
+	\\coordinate[label=${1:left}:\textcolor{${2:black}}{${3}}] (${4}) at (${5});
+	${0}
+endsnippet
+snippet for "foreach" w
+	\\foreach \\i in {${1}}
+	${0}
+endsnippet
