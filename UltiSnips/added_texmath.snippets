@@ -17,7 +17,7 @@ def math():
     synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
     currentlinenumber = int(vim.eval("line('.')"))
     currentcolnumber = int(vim.eval("col('.')"))
-    if (vim.eval('&filetype') in {'vimwiki', 'markdown'}) \
+    if (vim.eval('&filetype') in {'vimwiki', 'markdown', 'vimwiki.markdown', 'vimwiki.markdown.pandoc', 'markdown.vimwiki'}) \
 		and '$' in vim.eval("getline(%d)"%currentlinenumber)[:currentcolnumber] \
 		and "$" in vim.eval("getline(%d)"%currentlinenumber)[currentcolnumber-1:]:
 
