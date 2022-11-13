@@ -17,16 +17,80 @@ def math():
     synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
     currentlinenumber = int(vim.eval("line('.')"))
     currentcolnumber = int(vim.eval("col('.')"))
-    if (vim.eval('&filetype') in {'vimwiki', 'markdown', 'vimwiki.markdown', 'vimwiki.markdown.pandoc', 'markdown.vimwiki'}) \
-		and '$' in vim.eval("getline(%d)"%currentlinenumber)[:currentcolnumber] \
-		and "$" in vim.eval("getline(%d)"%currentlinenumber)[currentcolnumber-1:]:
-
-        return True
+    if (vim.eval('&filetype') in {'vimwiki', 'markdown', 'vimwiki.markdown', 'vimwiki.markdown.pandoc', 'markdown.vimwiki'}): 
+        if '$' in vim.eval("getline(%d)"%currentlinenumber)[:currentcolnumber] and "$" in vim.eval("getline(%d)"%currentlinenumber)[currentcolnumber-1:]:
+            return True
+        else:
+            pre_mark, post_mark = 0, 0
+            for i in range(1, 8):
+                if "$$" in vim.eval("getline({})".format(max(currentlinenumber-i, 0)))[:2]:
+                    pre_mark = 1
+                if "$$" in vim.eval("getline({})".format(currentlinenumber+i))[:2]:
+                    post_mark = 1
+                if pre_mark and post_mark:
+                    return True
+            return False
     try:
         first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
         return first != ignore
     except StopIteration:
         return False
+
+
+def generate_matrix(prefix, snip):
+    info = snip.buffer[snip.line]
+    spacelen = len(info) - len(info.lstrip())
+    linfo = info[:snip.snippet_start[1]]
+    rinfo = info[snip.snippet_end[1]:]
+    info = info[snip.snippet_start[1]:snip.snippet_end[1]]
+    # print([linfo, rinfo, info])
+    if len(info) > 1 and info[1].isnumeric():
+        real_shape = info[:2]
+        virtual_shape = info[2:]
+    else:
+        real_shape = info[0]
+        virtual_shape = info[1:]
+    if len(real_shape) == 1:
+        row_amount = int(real_shape)
+        column_amount = int(real_shape)
+    else:
+        row_amount = int(real_shape[0])
+        column_amount = int(real_shape[1])
+    if len(virtual_shape) == 0:
+        virtual_row_amount = "0"
+        virtual_column_amount = "0"
+    elif len(virtual_shape) == 1:
+        virtual_row_amount = virtual_shape[0]
+        virtual_column_amount = virtual_shape[0]
+    else:
+        virtual_row_amount = virtual_shape[0]
+        virtual_column_amount = virtual_shape[1]
+    snip.buffer[snip.line] = ''
+    displayed = re.sub(r"\\", r"\\\\", linfo) + "\\begin{%cmatrix}\n" % prefix
+    def generate_code(i, j, row, column, virtual_row, virtual_column):
+        if i == 1 and j == 1:
+            return ""
+        else:
+            code = """`!p
+from snippet_helpers import generate_matrix_element
+snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
+`""" % (i, j, row, column, virtual_row, virtual_column, "''," + ",".join("t[%d]" % x for x in range(1, j+1)), "''," + ",".join("t[%d]" % (1 + column * (x-1)) for x in range(1, i+1)))
+        return code
+    if row_amount > 0 and column_amount > 0:
+        displayed += " " * (4 + len(linfo)) + "$1\t" + ("& " if column_amount > 1 else "\\" * 4)
+        index = 2
+        for i in range(2, column_amount + 1):
+            displayed += "${" + "{}".format(index) + ":" + generate_code(1, i, row_amount, column_amount, virtual_row_amount, virtual_column_amount) + "}\t" + ("& " if i < column_amount else "\\" * 4)
+            index += 1
+        displayed += "\n"
+        for j in range(2, row_amount + 1):
+            displayed += " " * (4 + len(linfo))
+            for i in range(1, column_amount + 1):
+                displayed += "${" + "{}".format(index) + ":" + generate_code(j, i, row_amount, column_amount, virtual_row_amount, virtual_column_amount) + "}\t" + ("& " if i < column_amount else "\\" * 4)
+                index += 1
+            displayed += "\n"
+    displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + re.sub(r"\\", r"\\\\", rinfo) if rinfo else "")
+    snip.expand_anon(displayed)
 endglobal
 ##############
 # MATH STUFF #
@@ -59,10 +123,43 @@ snippet eqann "Equation array without numbers" b
 \end{eqnarray*}
 endsnippet
 
-snippet bmat "bmat" w
-\begin{bmatrix} $1 \end{bmatrix} $0
+#snippet bmat "bmat" w
+#\begin{bmatrix} $1 \end{bmatrix} $0
+#endsnippet
+
+snippet bmat "bmat" wm
+\begin{bmatrix}${1:`!p
+# add &
+regex = r"(?<=\w)[ \t]+(?=\w)"
+subst = r"\t&\t"
+snip.rv = re.sub(regex, subst, snip.v.text, 0, re.MULTILINE)
+# add \t\\\n
+snip.rv = ("\t\\\\\n"+snip.mkline()).join([x.strip() for x in snip.rv.split("\n") if x])
+# one line or multiple lines
+if snip.v.text.count('\n') > 1:
+	snip.rv = '\n' + snip.mkline() + snip.rv + '\n' + snip.mkline()
+else:
+	snip.rv = " " + snip.rv + " "
+`}\end{bmatrix} $0
 endsnippet
 
+post_jump "generate_matrix('p', snip)"
+context "math()"
+snippet "pmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "pmat" irw
+`!p
+if not snip.c:
+	snip.rv = match.group(1)
+`
+endsnippet
+
+post_jump "generate_matrix('b', snip)"
+context "math()"
+snippet "bmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "bmat" irw
+`!p
+if not snip.c:
+	snip.rv = match.group(1)
+`
+endsnippet
 
 context "math()"
 snippet frac. "Fraction" wA
@@ -158,3 +255,6 @@ endsnippet
 snippet mo "math another line" w
 $$ ${1}$$${0}
 endsnippet
+
+
+
