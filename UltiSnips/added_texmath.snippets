@@ -170,6 +170,40 @@ snippet frac "Fraction" w
 \frac{${1:${VISUAL:nom}}}{${2:denom}}
 endsnippet
 
+priority 10
+context "math()"
+snippet "hat." "hat" riA
+\hat{${1}}${0}
+endsnippet
+
+priority 100
+context "math()"
+snippet "([a-zA-Z])hat." "hat" riA
+\hat{`!p snip.rv=match.group(1)`}
+endsnippet
+
+priority 10
+context "math()"
+snippet "bar." "bar" riA
+\overline{${1}}${0}
+endsnippet
+
+priority 100
+context "math()"
+snippet "([a-zA-Z])bar." "bar" riA
+\overline{`!p snip.rv=match.group(1)`}
+endsnippet
+
+snippet "(\\?\w+)(,\.|\.,)" "Vector postfix" riA
+`!p 
+text=match.group(1) 
+if len(text) >1:
+	snip.rv="\\overrightarrow{"+text+"}"
+else:
+	snip.rv="\\vec{"+text+"}"
+`
+endsnippet 
+
 snippet mat "Smart Matrix"
 \begin{${1:p/b/v/V/B/small}matrix}
     $0
@@ -253,8 +287,9 @@ $ ${1}$${0}
 endsnippet
 
 snippet mo "math another line" w
-$$ ${1}$$${0}
+$$ 
+${1}
+$$${0}
 endsnippet
-
 
 
