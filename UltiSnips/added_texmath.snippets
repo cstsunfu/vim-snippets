@@ -2,40 +2,45 @@ priority -50
 
 global !p
 
-texMathZones = ['texMathZone'+x for x in
-    ['A', 'AS', 'B', 'BS', 'C', 'CS', 'D', 'DS', 'E', 'ES', 'F', 'FS', 'G', 'GS', 'H', 'HS', 'I', 'IS', 'J', 'JS', 'K', 'KS', 'L', 'LS', 'DS', 'V', 'W', 'X', 'Y', 'Z']]
+#texMathZones = ['texMathZone'+x for x in
+#    ['A', 'AS', 'B', 'BS', 'C', 'CS', 'D', 'DS', 'E', 'ES', 'F', 'FS', 'G', 'GS', 'H', 'HS', 'I', 'IS', 'J', 'JS', 'K', 'KS', 'L', 'LS', 'DS', 'V', 'W', 'X', 'Y', 'Z']]
 
-texIgnoreMathZones = ['texMathText']
+#texIgnoreMathZones = ['texMathText']
 
-texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
-texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
+#texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
+#texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
 
-ignore = texIgnoreMathZoneIds[0]
+#ignore = texIgnoreMathZoneIds[0]
 
-import re
+#import re
+#def math():
+#    synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
+#    currentlinenumber = int(vim.eval("line('.')"))
+#    currentcolnumber = int(vim.eval("col('.')"))
+#    if (vim.eval('&filetype') in {'vimwiki', 'markdown', 'vimwiki.markdown', 'vimwiki.markdown.pandoc', 'markdown.vimwiki'}): 
+#        if '$' in vim.eval("getline(%d)"%currentlinenumber)[:currentcolnumber] and "$" in vim.eval("getline(%d)"%currentlinenumber)[currentcolnumber-1:]:
+#            return True
+#        else:
+#            pre_mark, post_mark = 0, 0
+#            for i in range(1, 8):
+#                if "$$" in vim.eval("getline({})".format(max(currentlinenumber-i, 0)))[:2]:
+#                    pre_mark = 1
+#                if "$$" in vim.eval("getline({})".format(currentlinenumber+i))[:2]:
+#                    post_mark = 1
+#                if pre_mark and post_mark:
+#                    return True
+#            return False
+#    try:
+#        first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
+#        return first != ignore
+#    except StopIteration:
+#        return False
+
+# WARNING: Only support neovim(based treesitter)
+# NOTE https://github.com/nvim-treesitter/nvim-treesitter/issues/1184
 def math():
-    synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
-    currentlinenumber = int(vim.eval("line('.')"))
-    currentcolnumber = int(vim.eval("col('.')"))
-    if (vim.eval('&filetype') in {'vimwiki', 'markdown', 'vimwiki.markdown', 'vimwiki.markdown.pandoc', 'markdown.vimwiki'}): 
-        if '$' in vim.eval("getline(%d)"%currentlinenumber)[:currentcolnumber] and "$" in vim.eval("getline(%d)"%currentlinenumber)[currentcolnumber-1:]:
-            return True
-        else:
-            pre_mark, post_mark = 0, 0
-            for i in range(1, 8):
-                if "$$" in vim.eval("getline({})".format(max(currentlinenumber-i, 0)))[:2]:
-                    pre_mark = 1
-                if "$$" in vim.eval("getline({})".format(currentlinenumber+i))[:2]:
-                    post_mark = 1
-                if pre_mark and post_mark:
-                    return True
-            return False
-    try:
-        first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
-        return first != ignore
-    except StopIteration:
-        return False
-
+    vim.command("lua vim.g._temp_current_mathzone = require('util.global').in_mathzone()")
+    return vim.vars['_temp_current_mathzone']
 
 def generate_matrix(prefix, snip):
     info = snip.buffer[snip.line]
