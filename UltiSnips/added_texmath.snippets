@@ -2,40 +2,6 @@ priority -50
 
 global !p
 
-#texMathZones = ['texMathZone'+x for x in
-#    ['A', 'AS', 'B', 'BS', 'C', 'CS', 'D', 'DS', 'E', 'ES', 'F', 'FS', 'G', 'GS', 'H', 'HS', 'I', 'IS', 'J', 'JS', 'K', 'KS', 'L', 'LS', 'DS', 'V', 'W', 'X', 'Y', 'Z']]
-
-#texIgnoreMathZones = ['texMathText']
-
-#texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
-#texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
-
-#ignore = texIgnoreMathZoneIds[0]
-
-#import re
-#def math():
-#    synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
-#    currentlinenumber = int(vim.eval("line('.')"))
-#    currentcolnumber = int(vim.eval("col('.')"))
-#    if (vim.eval('&filetype') in {'vimwiki', 'markdown', 'vimwiki.markdown', 'vimwiki.markdown.pandoc', 'markdown.vimwiki'}): 
-#        if '$' in vim.eval("getline(%d)"%currentlinenumber)[:currentcolnumber] and "$" in vim.eval("getline(%d)"%currentlinenumber)[currentcolnumber-1:]:
-#            return True
-#        else:
-#            pre_mark, post_mark = 0, 0
-#            for i in range(1, 8):
-#                if "$$" in vim.eval("getline({})".format(max(currentlinenumber-i, 0)))[:2]:
-#                    pre_mark = 1
-#                if "$$" in vim.eval("getline({})".format(currentlinenumber+i))[:2]:
-#                    post_mark = 1
-#                if pre_mark and post_mark:
-#                    return True
-#            return False
-#    try:
-#        first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
-#        return first != ignore
-#    except StopIteration:
-#        return False
-
 # WARNING: Only support neovim(based treesitter)
 # NOTE https://github.com/nvim-treesitter/nvim-treesitter/issues/1184
 def math():
@@ -44,11 +10,9 @@ def math():
 
 def generate_matrix(prefix, snip):
     info = snip.buffer[snip.line]
-    spacelen = len(info) - len(info.lstrip())
     linfo = info[:snip.snippet_start[1]]
     rinfo = info[snip.snippet_end[1]:]
     info = info[snip.snippet_start[1]:snip.snippet_end[1]]
-    # print([linfo, rinfo, info])
     if len(info) > 1 and info[1].isnumeric():
         real_shape = info[:2]
         virtual_shape = info[2:]
@@ -76,10 +40,13 @@ def generate_matrix(prefix, snip):
         if i == 1 and j == 1:
             return ""
         else:
-            code = """`!p
+            ht = "''," + ",".join(f"t[{x}]" for x in range(1, j+1))
+            vt = "''," + ",".join(f"t[{1+column*(x-1)}]" for x in range(1, i+1))
+
+            code = f"""`!p
 from snippet_helpers import generate_matrix_element
-snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
-`""" % (i, j, row, column, virtual_row, virtual_column, "''," + ",".join("t[%d]" % x for x in range(1, j+1)), "''," + ",".join("t[%d]" % (1 + column * (x-1)) for x in range(1, i+1)))
+snip.rv = generate_matrix_element({i}, {j}, {row}, {column}, '{virtual_row}', '{virtual_column}', [{ht}], [{vt}])
+`"""
         return code
     if row_amount > 0 and column_amount > 0:
         displayed += " " * (4 + len(linfo)) + "$1\t" + ("& " if column_amount > 1 else "\\" * 4)
@@ -96,6 +63,7 @@ snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
             displayed += "\n"
     displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + re.sub(r"\\", r"\\\\", rinfo) if rinfo else "")
     snip.expand_anon(displayed)
+
 endglobal
 ##############
 # MATH STUFF #
@@ -164,6 +132,26 @@ snippet "bmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "bmat" irw
 if not snip.c:
 	snip.rv = match.group(1)
 `
+endsnippet
+
+context "math()"
+snippet cc. "C-Combination" iA
+C_{${1:${VISUAL:n}}}^{${2:${VISUAL:m}}}$0
+endsnippet
+
+context "math()"
+snippet aa. "A-Arrangement" iA
+A_{${1:${VISUAL:n}}}^{${2:${VISUAL:m}}}$0
+endsnippet
+
+context "math()"
+snippet sp. "Super Script" iA
+^{$1}$0
+endsnippet
+
+context "math()"
+snippet sb. "Sub Script" iA
+_{$1}$0
 endsnippet
 
 context "math()"
@@ -288,7 +276,7 @@ snippet "([vco]?)dot(s?)\." "dot" wrA
 endsnippet
 
 snippet mi "math inline" w
-$ ${1}$${0}
+$${1}$${0}
 endsnippet
 
 snippet mo "math another line" w
