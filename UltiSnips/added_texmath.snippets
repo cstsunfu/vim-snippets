@@ -45,7 +45,7 @@ def generate_matrix(prefix, snip):
 
             code = f"""`!p
 from snippet_helpers import generate_matrix_element
-snip.rv = generate_matrix_element({i}, {j}, {row}, {column}, '{virtual_row}', '{virtual_column}', [{ht}], [{vt}])
+snip.rv = generate_matrix_element({i}, {j}, {row}, {column}, '{virtual_row}', '{virtual_column}', ({ht}, ), ({vt}, ))
 `"""
         return code
     if row_amount > 0 and column_amount > 0:
