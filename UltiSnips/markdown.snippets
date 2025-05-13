@@ -116,7 +116,7 @@ snippet ilc "Inline Code" i
 \`${1:${VISUAL}}\`$0
 endsnippet
 
-snippet cbl "Codeblock" b
+snippet cb "Codeblock" b
 \`\`\`$1
 ${2:${VISUAL}}
 \`\`\`
@@ -144,6 +144,57 @@ endsnippet
 post_jump "create_table(snip)"
 snippet "tb([1-9][1-9])" "Fancy table" br
 `!p snip.rv = match.group(1)`
+endsnippet
+
+
+################
+# obsidian     #
+################
+
+snippet note ""
+\`\`\`ad-note
+title: ${1:${VISUAL:Note}}
+${2:${VISUAL}}
+\`\`\`
+endsnippet
+
+
+snippet info ""
+\`\`\`ad-info
+title: ${1:${VISUAL:Info}}
+${2:${VISUAL}}
+\`\`\`
+endsnippet
+
+
+snippet todo ""
+\`\`\`ad-todo
+title: ${1:${VISUAL:TODO}}
+${2:${VISUAL}}
+\`\`\`
+endsnippet
+
+
+snippet warn ""
+\`\`\`ad-warn
+title: ${1:${VISUAL:Warn}}
+${2:${VISUAL}}
+\`\`\`
+endsnippet
+
+
+snippet faq ""
+\`\`\`ad-faq
+title: ${1:${VISUAL:FAQ}}
+${2:${VISUAL}}
+\`\`\`
+endsnippet
+
+snippet exp ""
+\`\`\`ad-example
+title: ${1:${VISUAL:Example}}
+${2:${VISUAL}}
+\`\`\`
 endsnippet
 
 # vim:ft=snippets:
